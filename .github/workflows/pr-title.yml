@@ -23,7 +23,8 @@ jobs:
         with:
           anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
           github_token: ${{ github.token }}
-          allowed_tools: "Bash(gh pr edit *)"
+          allowed_tools: |
+            Bash(gh pr edit*)
           show_full_output: true
           prompt: |
             You already have all the information you need below. Do NOT run gh pr view or any other command to fetch PR details.
