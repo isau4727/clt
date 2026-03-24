@@ -23,8 +23,7 @@ jobs:
         with:
           anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
           github_token: ${{ github.token }}
-          allowed_tools: |
-            Bash(gh pr edit*)
+          claude_args: '--allowedTools "Bash(gh pr edit*)" "Bash(git diff*)" "Bash(git log*)"'
           show_full_output: true
           prompt: |
             You already have all the information you need below. Do NOT run gh pr view or any other command to fetch PR details.
@@ -36,10 +35,10 @@ jobs:
             Check if the PR title follows the format: [TL-XXX] Description
 
             Rules:
-            1. Title MUST match the pattern: [last commit name] <description>
-            2. The ticket number should match the one in the branch name (e.g. branch "TL-689-some-feature" → title should start with "[TL-689]")
-            3. If the title already matches the format, do nothing — just confirm it's valid.
-            4. If the title does NOT match, fix it:
-               - Extract the ticket number from the branch name
-               - Rename the PR using: gh pr edit ${{ github.event.pull_request.number }} --title "[TL-XXX] description"
-               - Keep the existing description from the title if it makes sense, otherwise use the branch name description (replace hyphens with spaces)
+            1. Title MUST match the pattern: [TL-XXX] <description>
+            2. Extract the ticket number from the branch name (e.g. branch "TL-689-some-feature" → "[TL-689]")
+            3. If the title already matches the format, do nothing — just confirm it's valid
+            4. If the title does NOT match, fix it using: gh pr edit ${{ github.event.pull_request.number }} --title "[TL-XXX] description"
+            5. If the branch name does not contain a TL-XXX ticket number, look at the actual code changes (git diff, changed files) to understand what the PR does, and create a descriptive title based on that
+            6. Keep the existing description from the title if it makes sense, otherwise generate one from the changes
+            7. ALWAYS run the gh pr edit command if the title needs fixing — do not ask for approval or suggest manual commands
