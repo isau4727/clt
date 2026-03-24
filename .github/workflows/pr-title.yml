@@ -1,0 +1,37 @@
+name: PR Title Validation
+
+on:
+  pull_request:
+    types: [opened, edited, reopened]
+
+jobs:
+  validate-title:
+    name: Validate PR Title
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    permissions:
+      contents: read
+      pull-requests: write
+      id-token: write
+
+    steps:
+      - name: Check PR title format
+        uses: anthropics/claude-code-action@v1
+        with:
+          anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
+          claude_args: '--allowedTools "Bash(gh pr edit *)"'
+          prompt: |
+            Check if the PR title follows the format: [TL-XXX] Description
+
+            PR number: ${{ github.event.pull_request.number }}
+            Current title: ${{ github.event.pull_request.title }}
+            Branch name: ${{ github.head_ref }}
+
+            Rules:
+            1. Title MUST match the pattern: [TL-<number>] <description>
+            2. The ticket number should match the one in the branch name (e.g. branch "TL-689-some-feature" → title should start with "[TL-689]")
+            3. If the title already matches the format, do nothing — just confirm it's valid.
+            4. If the title does NOT match, fix it:
+               - Extract the ticket number from the branch name
+               - Rename the PR using: gh pr edit ${{ github.event.pull_request.number }} --title "[TL-XXX] description"
+               - Keep the existing description from the title if it makes sense, otherwise use the branch name description (replace hyphens with spaces)
