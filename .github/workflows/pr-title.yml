@@ -26,11 +26,13 @@ jobs:
           allowed_tools: "Bash(gh pr edit *)"
           show_full_output: true
           prompt: |
-            Check if the PR title follows the format: [TL-XXX] Description
+            You already have all the information you need below. Do NOT run gh pr view or any other command to fetch PR details.
 
             PR number: ${{ github.event.pull_request.number }}
             Current title: ${{ github.event.pull_request.title }}
             Branch name: ${{ github.head_ref }}
+
+            Check if the PR title follows the format: [TL-XXX] Description
 
             Rules:
             1. Title MUST match the pattern: [last commit name] <description>
