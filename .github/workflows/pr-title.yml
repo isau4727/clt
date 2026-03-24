@@ -31,7 +31,7 @@ jobs:
             Branch name: ${{ github.head_ref }}
 
             Rules:
-            1. Title MUST match the pattern: [TL-<number>] <description>
+            1. Title MUST match the pattern: [last commit name] <description>
             2. The ticket number should match the one in the branch name (e.g. branch "TL-689-some-feature" → title should start with "[TL-689]")
             3. If the title already matches the format, do nothing — just confirm it's valid.
             4. If the title does NOT match, fix it:
